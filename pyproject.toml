@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloudrunauditor"
+version = "0.1.0"
+description = "Audit Cloud Run services via Dynatrace MCP — every finding cites the metric or config that triggered it."
+authors = [{ name = "Masoud Masoori", email = "masoud.masoori@mas-ai.co" }]
+license = { text = "BSD-3-Clause" }
+readme = "README.md"
+requires-python = ">=3.11"
+
+# Pinned exact (no >= / ~=) per operator's policy — see D:/Claude-Coworker/OPERATOR-PROFILE.md
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn==0.32.1",
+    "pydantic==2.10.4",
+    "httpx==0.28.1",
+    "google-cloud-aiplatform==1.74.0",
+    "google-genai==0.4.0",
+    "google-cloud-logging==3.11.3",
+    "google-cloud-monitoring==2.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.0",
+    "ruff==0.8.4",
+    "mypy==1.13.0",
+]
+
+[project.scripts]
+cloudrunauditor = "cloudrunauditor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
