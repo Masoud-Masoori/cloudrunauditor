@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CloudRunAuditor — sample audit memo</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2330;
+      --text: #fafafa;
+      --muted: #94a3b8;
+      --accent: #1a73e8;
+      --gold: #fbbc04;
+      --crit: #d97757;
+      --warn: #f4b942;
+      --ok: #22c55e;
+      --line: #243042;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    header {
+      background: linear-gradient(135deg, var(--accent) 0%, #0f4daa 100%);
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--line);
+    }
+    header h1 { margin: 0 0 6px 0; font-size: 24px; letter-spacing: -0.5px; }
+    header .sub { color: rgba(255,255,255,0.85); font-size: 14px; }
+    main { max-width: 1080px; margin: 0 auto; padding: 32px; }
+    .meta {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+      font-size: 13px;
+    }
+    .meta dt { color: var(--muted); }
+    .meta dd { margin: 0; }
+    .finding {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--ok);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
+    }
+    .finding.critical { border-left-color: var(--crit); }
+    .finding.suspicious { border-left-color: var(--warn); }
+    .finding-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge.critical { background: rgba(217,119,87,0.18); color: var(--crit); }
+    .badge.suspicious { background: rgba(244,185,66,0.18); color: var(--warn); }
+    .badge.benign { background: rgba(34,197,94,0.18); color: var(--ok); }
+    h2 { margin: 0; font-size: 17px; }
+    .section { margin: 12px 0; }
+    .section .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .evidence {
+      background: rgba(26,115,232,0.06);
+      border: 1px solid rgba(26,115,232,0.25);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: "JetBrains Mono", Consolas, Menlo, monospace;
+      font-size: 12px;
+    }
+    .evidence a { color: var(--gold); text-decoration: none; }
+    .evidence a:hover { text-decoration: underline; }
+    .demo-banner {
+      background: rgba(251,188,4,0.12);
+      border: 1px solid rgba(251,188,4,0.35);
+      color: var(--gold);
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+    }
+    code { font-family: "JetBrains Mono", Consolas, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CloudRunAuditor — Audit Memo</h1>
+    <div class="sub">Built on Google Cloud Agent Builder · Gemini · Dynatrace MCP · Cloud Run</div>
+  </header>
+  <main>
+    <div class="demo-banner">
+      <strong>Demo mode.</strong> This page renders a sample audit memo generated against a synthetic
+      Cloud Run service to show the output format judges will see. Real audits run via
+      <code>POST /audit</code>.
+    </div>
+
+    <dl class="meta">
+      <dt>Service</dt>
+      <dd><code>projects/demo-corp/locations/us-central1/services/checkout-api</code></dd>
+      <dt>Region</dt>
+      <dd>us-central1</dd>
+      <dt>Generated at</dt>
+      <dd>2026-05-20 16:42 UTC</dd>
+      <dt>Audit patterns run</dt>
+      <dd>5 / 5</dd>
+      <dt>Verdict</dt>
+      <dd><span class="badge critical">2 critical</span> <span class="badge suspicious">1 suspicious</span> <span class="badge benign">2 benign</span></dd>
+      <dt>Audit duration</dt>
+      <dd>4.2s (parallel)</dd>
+    </dl>
+
+    <h2 style="margin-top:8px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px;">Findings (sorted by severity)</h2>
+
+    <div class="finding critical">
+      <div class="finding-head">
+        <span class="badge critical">Critical</span>
+        <h2>Public IAM: allUsers has roles/run.invoker</h2>
+      </div>
+      <div class="section">
+        <div class="label">Impact</div>
+        Anyone on the internet can invoke this service. Risk: data exfiltration, abuse-cost, DDoS amplification.
+      </div>
+      <div class="section">
+        <div class="label">Fix</div>
+        <code>gcloud run services remove-iam-policy-binding checkout-api --region=us-central1 --member=allUsers --role=roles/run.invoker</code>
+      </div>
+      <div class="section">
+        <div class="label">Evidence</div>
+        <div class="evidence">
+          gcloud iam policy line:
+          <a href="#" onclick="return false">policy.bindings[2].members[0] = "allUsers"</a><br>
+          (read at 2026-05-20T16:42:11Z via the Cloud Run IAM API)
+        </div>
+      </div>
+    </div>
+
+    <div class="finding critical">
+      <div class="finding-head">
+        <span class="badge critical">Critical</span>
+        <h2>Error rate spike: 12.4% over last 24h</h2>
+      </div>
+      <div class="section">
+        <div class="label">Impact</div>
+        Users hitting <code>checkout-api</code> are seeing 5xx errors ~1 in 8 requests. Conversion + reliability impact.
+      </div>
+      <div class="section">
+        <div class="label">Fix</div>
+        Inspect the top error class via <code>gcloud logging read 'severity&gt;=ERROR' --limit=20</code>
+      </div>
+      <div class="section">
+        <div class="label">Evidence</div>
+        <div class="evidence">
+          Dynatrace anomaly id <a href="#" onclick="return false">PRB-1f2a-2026-05-20-16</a>
+          (error-rate-threshold-breach, 24h window)<br>
+          Cloud Monitoring metric <a href="#" onclick="return false">run.googleapis.com/request_count?response_code_class=5xx</a> = 0.124
+        </div>
+      </div>
+    </div>
+
+    <div class="finding suspicious">
+      <div class="finding-head">
+        <span class="badge suspicious">Suspicious</span>
+        <h2>Oversized instance: 1Gi memory but p95 usage 187 MiB</h2>
+      </div>
+      <div class="section">
+        <div class="label">Impact</div>
+        ~80% memory paid for, never used. Cost waste at scale.
+      </div>
+      <div class="section">
+        <div class="label">Fix</div>
+        Drop instance memory to 512Mi (or 256Mi) and re-deploy.
+      </div>
+      <div class="section">
+        <div class="label">Evidence</div>
+        <div class="evidence">
+          Cloud Run revision config:
+          <a href="#" onclick="return false">spec.template.spec.containers[0].resources.limits.memory = "1Gi"</a><br>
+          Dynatrace metric: <a href="#" onclick="return false">memory.usage.p95 = 187 MiB</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding benign">
+      <div class="finding-head">
+        <span class="badge benign">Benign</span>
+        <h2>Health check configured</h2>
+      </div>
+      <div class="section">
+        Service has <code>livenessProbe</code> on <code>/healthz</code> with sensible thresholds. Pattern 3/5 passes.
+      </div>
+    </div>
+
+    <div class="finding benign">
+      <div class="finding-head">
+        <span class="badge benign">Benign</span>
+        <h2>Cold-start latency p95: 412ms</h2>
+      </div>
+      <div class="section">
+        Well under the 2-second threshold. Pattern 1/5 passes.
+      </div>
+    </div>
+
+    <h2 style="margin-top:32px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px;">Architecture (this audit)</h2>
+    <pre style="background:var(--panel); padding:16px; border-radius:8px; font-size:11px; overflow-x:auto; color:var(--muted);">
+Operator   ── POST /audit ──&gt; Cloud Run (this service)
+                                  │
+                  ┌───────────────┼────────────────┐
+                  │               │                │
+              gcloud MCP     Dynatrace MCP    Cloud Monitoring
+              (config+IAM)   (anomalies+        (raw metrics)
+                              traces)
+                  │               │                │
+                  └─── ServiceSnapshot ────────────┘
+                              │
+                       audit.run_all
+                              │
+                       Finding[] + Evidence[]
+                              │
+                       memo.render_memo
+                              │
+                              ▼
+                     This HTML you're reading
+    </pre>
+  </main>
+  <footer>
+    CloudRunAuditor · BSD-3-Clause · <a href="https://github.com/Masoud-Masoori/cloudrunauditor" style="color:var(--accent)">github.com/Masoud-Masoori/cloudrunauditor</a>
+  </footer>
+</body>
+</html>
