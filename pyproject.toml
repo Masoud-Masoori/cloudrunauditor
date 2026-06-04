@@ -17,7 +17,7 @@ dependencies = [
     "uvicorn==0.32.1",
     "pydantic==2.10.4",
     "httpx==0.28.1",
-    "google-cloud-aiplatform==1.74.0",
+    "google-cloud-aiplatform==1.133.0",
     "google-genai==0.4.0",
     "google-cloud-logging==3.11.3",
     "google-cloud-monitoring==2.27.0",
